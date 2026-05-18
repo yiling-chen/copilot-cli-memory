@@ -1,0 +1,2 @@
+# Don't accidentally commit personal memory files if someone runs init-project.sh here
+.copilot/memory/
