@@ -13,9 +13,8 @@ mkdir -p "$MEMORY_DIR"
 
 # Copy instructions.md
 if [ -f "$INSTRUCTIONS" ]; then
-  echo "  ~/.copilot/instructions.md already exists — appending memory rules."
-  echo "" >> "$INSTRUCTIONS"
-  cat "$SCRIPT_DIR/instructions.md" >> "$INSTRUCTIONS"
+  echo "  ~/.copilot/instructions.md already exists — skipping."
+  echo "  To add memory rules manually, append the contents of instructions.md from this repo."
 else
   cp "$SCRIPT_DIR/instructions.md" "$INSTRUCTIONS"
   echo "  Created ~/.copilot/instructions.md"
