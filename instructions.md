@@ -13,7 +13,7 @@ At the start of every session, you MUST:
 
 1. Read `~/.copilot/memory/MEMORY.md` (global index). If it does not exist, skip silently.
 2. Check whether `.copilot/memory/MEMORY.md` exists in the current working directory. If it does, read it (project index).
-3. For each memory listed in both indexes, read its file to load the full content.
+3. Read every memory file listed in both indexes upfront — do not defer. Load the full content of all listed files before processing any user message.
 4. Where a global memory and a project memory address the same rule or topic, the **project layer takes precedence**.
 
 Do this before responding to the user's first message.
@@ -45,13 +45,17 @@ Cross-link related memories with `[[other-memory-name]]`.
 
 ## MEMORY.md Index Format
 
+`~/.copilot/memory/MEMORY.md` contains **only** a `## Global` section — it tracks global-layer memories exclusively.
+`.copilot/memory/MEMORY.md` contains **only** a `## Project` section — it tracks project-layer memories exclusively.
+Each file manages its own layer only; never mix sections across files.
+
 ~~~
 # Memory Index
 
-## Global
+## Global          ← only in ~/.copilot/memory/MEMORY.md
 - [slug](filename.md) — one-line hook (under 150 chars)
 
-## Project
+## Project         ← only in .copilot/memory/MEMORY.md
 - [slug](filename.md) — one-line hook (under 150 chars)
 ~~~
 
@@ -76,14 +80,18 @@ Save memories automatically — do not wait for the user to ask.
 
 **Corrections** are easy to notice. **Confirmations** are quiet — watch for "yes exactly", "perfect", or accepting an unusual choice without pushback. Record both.
 
-**Choosing the layer:** Ask — "would this rule make sense in any project?" If yes → global. If it only applies to this repo → project.
+**Choosing the layer:** Ask — "would this rule make sense in any project?" If yes → global. If it only applies to this repo → project. When uncertain, prefer global — the user can always narrow it to project later.
 
 ### How to save a memory
 
-1. Write the memory file:
+Write memory files immediately when a trigger fires — do not defer to session end.
+
+1. If the target `MEMORY.md` does not exist yet, create the directory and the file first with the standard format header (`# Memory Index` and the appropriate section heading) before writing anything else.
+2. If a memory with the same `name` slug already exists, update the existing file in place rather than creating a new one. Update its MEMORY.md pointer line only if the description has changed.
+3. Write the memory file:
    - Global: `~/.copilot/memory/<slug>.md`
    - Project: `.copilot/memory/<slug>.md`
-2. Add a one-line pointer to the appropriate section of the corresponding `MEMORY.md`.
+4. Add (or update) a one-line pointer in the appropriate section of the corresponding `MEMORY.md`.
 
 ---
 
@@ -105,4 +113,4 @@ Memories record facts as of when they were written — they may be stale.
 - Memory names a function or flag → grep to confirm it still exists
 - Memory conflicts with current code → trust what you observe now; update or remove the stale memory
 
-If a recalled memory conflicts with what you can observe directly, correct the memory file before proceeding.
+If a recalled memory conflicts with what you can observe directly, correct the memory file before proceeding. When updating stale content, rewrite the file with the corrected facts and append a brief note at the end — e.g. `**Revised:** <date> — <what changed and why>` — so there is a visible audit trail.
